@@ -5,10 +5,10 @@
  *CXXR documentation taken from the R project itself, incorporated into
  *CXXR CXXR (and possibly MODIFIED) under the terms of the GNU General Public
  *CXXR Licence.
- *CXXR 
+ *CXXR
  *CXXR CXXR is Copyright (C) 2008-14 Andrew R. Runnalls, subject to such other
  *CXXR copyrights and copyright restrictions as may be stated below.
- *CXXR 
+ *CXXR
  *CXXR CXXR is not part of the R project, and bugs and other issues should
  *CXXR not be reported via r-bugs or other R project channels; instead refer
  *CXXR to the CXXR website.
@@ -97,10 +97,8 @@ using std::FILE;
 #include "CXXR/Symbol.h"
 #include "CXXR/WeakRef.h"
 
-typedef unsigned char Rbyte;
 
 /* type for length of (standard, not long) vectors etc */
-typedef int R_len_t;
 #define R_LEN_T_MAX INT_MAX
 
 /* both config.h and Rconfig.h set SIZEOF_SIZE_T, but Rconfig.h is
