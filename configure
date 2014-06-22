@@ -25046,10 +25046,10 @@ if test "${r_cv_prog_cxx_m}" = yes; then
   cat << \EOF >> ${r_cxx_rules_frag}
 .cc.d:
 	@echo "making $@ from $<"
-	@$(CXX) -M $(ALL_CPPFLAGS) $< > $@
+	@$(CXX) -M $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $< > $@
 .cpp.d:
 	@echo "making $@ from $<"
-	@$(CXX) -M $(ALL_CPPFLAGS) $< > $@
+	@$(CXX) -M $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $< > $@
 EOF
 else
   cat << \EOF >> ${r_cxx_rules_frag}
@@ -38930,6 +38930,7 @@ fi
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MKDIR_P" >&5
 $as_echo "$MKDIR_P" >&6; }
+
 
 mkdir_p="$MKDIR_P"
 case $mkdir_p in

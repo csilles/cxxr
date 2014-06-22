@@ -5,10 +5,10 @@
  *CXXR documentation taken from the R project itself, incorporated into
  *CXXR CXXR (and possibly MODIFIED) under the terms of the GNU General Public
  *CXXR Licence.
- *CXXR 
+ *CXXR
  *CXXR CXXR is Copyright (C) 2008-14 Andrew R. Runnalls, subject to such other
  *CXXR copyrights and copyright restrictions as may be stated below.
- *CXXR 
+ *CXXR
  *CXXR CXXR is not part of the R project, and bugs and other issues should
  *CXXR not be reported via r-bugs or other R project channels; instead refer
  *CXXR to the CXXR website.
@@ -170,7 +170,7 @@ FILE *R_fopen(const char *filename, const char *mode)
 
 #if defined(Win32)
 
-#define BSIZE 100000 
+#define BSIZE 100000
 wchar_t *filenameToWchar(const SEXP fn, const Rboolean expand)
 {
     static wchar_t filename[BSIZE+1];
@@ -188,7 +188,7 @@ wchar_t *filenameToWchar(const SEXP fn, const Rboolean expand)
     if(IS_BYTES(fn)) error(_("encoding of a filename cannot be 'bytes'"));
     obj = Riconv_open("UCS-2LE", from);
     if(obj == (void *)(-1))
-	error(_("unsupported conversion from '%s' in codepage %d"), 
+	error(_("unsupported conversion from '%s' in codepage %d"),
 	      from, localeCP);
 
     if(expand) inbuf = R_ExpandFileName(CHAR(fn)); else inbuf = CHAR(fn);
@@ -325,7 +325,7 @@ int R_system(const char *command)
     sigaddset(&ss, SIGPROF);
     sigprocmask(SIG_BLOCK, &ss,  NULL);
 #ifdef HAVE_AQUA
-    if(ptr_CocoaSystem) res = ptr_CocoaSystem(command); else
+    if(ptr_CocoaSystem) res = ptr_CocoaSystem(const_cast<char*>(command)); else
 #endif
     res = system(command);
     sigprocmask(SIG_UNBLOCK, &ss, NULL);
@@ -375,7 +375,7 @@ SEXP attribute_hidden do_getenv(SEXP call, SEXP op, SEXP args, SEXP env)
 	wchar_t **w;
 	for (i = 0, w = _wenviron; *w != NULL; i++, w++)
 	    n = max(n, wcslen(*w));
-	N = 3*n+1; 
+	N = 3*n+1;
 	vector<char> bufv(N);
 	char* buf = &bufv[0];
 	PROTECT(ans = allocVector(STRSXP, i));
@@ -619,11 +619,11 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 	args = CDR(args);
 	mark = asLogical(CAR(args));
 	if(mark == NA_LOGICAL)
-	    error(_("invalid '%s' argument"), "mark");	
+	    error(_("invalid '%s' argument"), "mark");
 	args = CDR(args);
 	toRaw = asLogical(CAR(args));
 	if(toRaw == NA_LOGICAL)
-	    error(_("invalid '%s' argument"), "toRaw");	
+	    error(_("invalid '%s' argument"), "toRaw");
 	/* some iconv's allow "UTF8", but libiconv does not */
 	if(streql(from, "UTF8") || streql(from, "utf8") ) from = "UTF-8";
 	if(streql(to, "UTF8") || streql(from, "utf8") ) to = "UTF-8";
@@ -636,7 +636,7 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 	obj = Riconv_open(to, from);
 	if(obj == iconv_t((-1)))
 #ifdef Win32
-	    error(_("unsupported conversion from '%s' to '%s' in codepage %d"), 
+	    error(_("unsupported conversion from '%s' to '%s' in codepage %d"),
 		  from, to, localeCP);
 #else
 	    error(_("unsupported conversion from '%s' to '%s'"), from, to);
@@ -649,13 +649,13 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 		PROTECT(ans = allocVector(STRSXP, LENGTH(x)));
 		DUPLICATE_ATTRIB(ans, x);
 	    }
-	} else {   
+	} else {
 	    if(TYPEOF(x) != STRSXP)
 		error(_("'x' must be a character vector"));
 	    if(toRaw) {
 		PROTECT(ans = allocVector(VECSXP, LENGTH(x)));
 		DUPLICATE_ATTRIB(ans, x);
-	    } else 
+	    } else
 		PROTECT(ans = duplicate(x));
 	}
 	R_AllocStringBuffer(0, &cbuff);  /* 0 -> default */
@@ -675,7 +675,7 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 		}
 	    }
 	top_of_loop:
-	    inbuf = isRawlist ? reinterpret_cast<const char *>( RAW(si)) : CHAR(si); 
+	    inbuf = isRawlist ? reinterpret_cast<const char *>( RAW(si)) : CHAR(si);
 	    inb = LENGTH(si);
 	    outbuf = cbuff.data; outb = cbuff.bufsize - 1;
 	    /* First initialize output */
@@ -689,7 +689,7 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 	    if(res == CXXRCONSTRUCT(size_t, -1) && errno == E2BIG) {
 		R_AllocStringBuffer(2*cbuff.bufsize, &cbuff);
 		goto top_of_loop;
-	    } else if(res == CXXRCONSTRUCT(size_t, -1) && sub && 
+	    } else if(res == CXXRCONSTRUCT(size_t, -1) && sub &&
 		      (errno == EILSEQ || errno == EINVAL)) {
 		/* it seems this gets thrown for non-convertible input too */
 		if(strcmp(sub, "byte") == 0) {
@@ -723,7 +723,7 @@ SEXP attribute_hidden do_iconv(SEXP call, SEXP op, SEXP args, SEXP env)
 	    } else {
 		if(res != CXXRCONSTRUCT(size_t, -1) && inb == 0) {
 		    cetype_t ienc = CE_NATIVE;
-		    
+
 		    size_t nout = cbuff.bufsize - 1 - outb;
 		    if(mark) {
 			if(isLatin1) ienc = CE_LATIN1;
@@ -836,7 +836,7 @@ const char *translateChar(SEXP x)
 	if(!utf8_obj) {
 	    obj = Riconv_open("", "UTF-8");
 	    /* should never happen */
-	    if(obj == reinterpret_cast<void *>((-1))) 
+	    if(obj == reinterpret_cast<void *>((-1)))
 #ifdef Win32
 		error(_("unsupported conversion from '%s' in codepage %d"),
 		      "latin1", localeCP);
@@ -942,7 +942,7 @@ SEXP installTrChar(SEXP x)
 	if(!utf8_obj) {
 	    obj = Riconv_open("", "UTF-8");
 	    /* should never happen */
-	    if(obj == reinterpret_cast<void *>((-1))) 
+	    if(obj == reinterpret_cast<void *>((-1)))
 #ifdef Win32
 		error(_("unsupported conversion from '%s' in codepage %d"),
 		      "latin1", localeCP);
@@ -1038,7 +1038,7 @@ const char *translateCharUTF8(SEXP x)
 	error(_("translating strings with \"bytes\" encoding is not allowed"));
 
     obj = Riconv_open("UTF-8", IS_LATIN1(x) ? "latin1" : "");
-    if(obj == reinterpret_cast<void *>((-1))) 
+    if(obj == reinterpret_cast<void *>((-1)))
 #ifdef Win32
 	error(_("unsupported conversion from '%s' in codepage %d"),
 	      "latin1", localeCP);
@@ -1125,7 +1125,7 @@ const wchar_t *wtransChar(SEXP x)
     } else if(IS_UTF8(x)) {
 	if(!utf8_wobj) {
 	    obj = Riconv_open(TO_WCHAR, "UTF-8");
-	    if(obj == reinterpret_cast<void *>((-1))) 
+	    if(obj == reinterpret_cast<void *>((-1)))
 		error(_("unsupported conversion from '%s' to '%s'"),
 		      "latin1", TO_WCHAR);
 	    utf8_wobj = obj;
@@ -1540,7 +1540,7 @@ size_t ucstoutf8(char *s, const unsigned int wc)
 	}
 	ucsutf8_obj = cd;
     }
-    
+
     status = Riconv(ucsutf8_obj, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
 
     if (status == size_t( -1)) {
@@ -1693,7 +1693,7 @@ char * R_tmpnam(const char * prefix, const char * tempdir)
 }
 
 /* NB for use with multicore: parent and all children share the same
-   session directory and run in parallel.   
+   session directory and run in parallel.
    So as from 2.14.1, we make sure getpic() is part of the process.
 */
 char * R_tmpnam2(const char *prefix, const char *tempdir, const char *fileext)
@@ -1708,16 +1708,16 @@ char * R_tmpnam2(const char *prefix, const char *tempdir, const char *fileext)
 
     if(!prefix) prefix = "";	/* NULL */
     if(!fileext) fileext = "";  /*  "   */
-    
+
 #if RAND_MAX > 16777215
 #define RAND_WIDTH 8
 #else
 #define RAND_WIDTH 12
 #endif
-    
-    if(strlen(tempdir) + 1 + strlen(prefix) + RAND_WIDTH + strlen(fileext) >= PATH_MAX) 
+
+    if(strlen(tempdir) + 1 + strlen(prefix) + RAND_WIDTH + strlen(fileext) >= PATH_MAX)
     	error(_("temporary name too long"));
-    	
+
     for (n = 0; n < 100; n++) {
 	/* try a random number at the end.  Need at least 6 hex digits */
 #if RAND_MAX > 16777215
@@ -1845,7 +1845,7 @@ do_setSessionTimeLimit(SEXP call, SEXP op, SEXP args, SEXP rho)
 SEXP attribute_hidden do_glob(SEXP call, SEXP op, SEXP args, SEXP env)
 {
     SEXP x, ans;
-    R_xlen_t i, n; 
+    R_xlen_t i, n;
     int res, dirmark, initialized=FALSE;
     glob_t globbuf;
 #ifdef Win32

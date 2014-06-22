@@ -21,7 +21,7 @@ CC = @CC@
 CXX = @CXX@
 # FIXME arr 2007/06/17: += conflicts with R coding standards
 CFLAGS += @CFLAGS@ @LTO@
-CXXFLAGS += @CXXFLAGS@ -Wno-attributes
+CXXFLAGS = @CXXFLAGS@ 
 CPICFLAGS = @CPICFLAGS@
 CPPFLAGS += @CPPFLAGS@
 DEFS = @DEFS@ @R_DEFS@
@@ -116,7 +116,7 @@ ALL_FFLAGS_LO = $(R_XTRA_FFLAGS) $(R_OPENMP_FFLAGS) $(FPICFLAGS) $(SHLIB_FFLAGS)
 	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
 .cpp.d:
 	@echo "making $@ from $<"
-	@gcc -MM $(ALL_CPPFLAGS) $< > $@
+	@$(CXX) -MM $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $< > $@
 .f.o:
 	$(F77) $(ALL_FFLAGS) -c $< -o $@
 
