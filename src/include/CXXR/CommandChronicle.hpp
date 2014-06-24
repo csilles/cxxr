@@ -169,9 +169,16 @@ namespace CXXR {
 	// the m_seen set is not itself serialised.
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
+		boost::serialization::split_member(ar, *this, version);	
+	}
+
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version) {
 	    using namespace boost::serialization;
 	    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GCNode);
-	    size_t sz = m_reads.size();
+	    std::string str_command;
+	    ar >> BOOST_SERIALIZATION_NVP(str_command);
+	    size_t sz;
 	    ar & boost::serialization::make_nvp("size", sz);
 	    m_reads.resize(sz);
 	    for (size_t i = 0; i < sz; ++i) {
@@ -179,6 +186,9 @@ namespace CXXR {
 		GCNPTR_SERIALIZE(ar, parent);
 	    }
 	}
+
+	template<class Archive>
+	void save(Archive & ar, const unsigned int version) const;
     };
 }  // namespace CXXR
 

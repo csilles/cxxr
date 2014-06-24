@@ -38,6 +38,7 @@
  * Implementation of class CommandChronicle.
  */
 
+#include "Defn.h" // For DEPARSE
 #include "CXXR/CommandChronicle.hpp"
 
 #include "CXXR/Provenance.hpp"
@@ -74,6 +75,28 @@ void CommandChronicle::visitReferents(const_visitor* v) const
 void CommandChronicle::writeBinding(const Provenance* bdgprov)
 {
     m_seen.insert(bdgprov->serialNumber());
+}
+
+template<class Archive>
+void CommandChronicle::save(Archive & ar, const unsigned int version) const {
+    using namespace boost::serialization;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GCNode);
+    {
+	GCNode::GCInhibitor gci;
+	RObject* cmd=const_cast<RObject*>(command());
+	GCStackRoot<StringVector> sv(static_cast<StringVector*>(deparse1(cmd, FALSE, DEFAULTDEPARSE)));
+	std::string str_command = "";
+	for (unsigned int i = 0; i < sv->size(); ++i) {
+	    if (i > 0) str_command += '\n'; str_command += (*sv)[i]->c_str();
+	}
+	ar << BOOST_SERIALIZATION_NVP(str_command);
+	}
+	size_t sz = m_reads.size();
+	ar & boost::serialization::make_nvp("size", sz);
+	for (size_t i = 0; i < sz; ++i) {
+	    const GCEdge<const Provenance>& parent = m_reads[i];
+	    GCNPTR_SERIALIZE(ar, parent);
+	}
 }
 
 BOOST_CLASS_EXPORT_IMPLEMENT(CXXR::CommandChronicle)
