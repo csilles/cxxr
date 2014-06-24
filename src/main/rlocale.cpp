@@ -207,7 +207,13 @@ static const char UNICODE[] = "UCS-4LE";
 #endif
 
 /* in Defn.h which is not included here */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern const char *locale2charset(const char *);
+#ifdef __cplusplus
+}  /* extern "C" */
+#endif
 
 
 #define ISWFUNC(ISWNAME) static int Ri18n_isw ## ISWNAME (wint_t wc) \
